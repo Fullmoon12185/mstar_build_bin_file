@@ -1,0 +1,36 @@
+[i] Analizing header ...
+[i] Saving header script to ./pana_pack/~header_script ...
+[i] Parsing script ...
+[i] Partition: recovery	Offset: 4000	Size d45bd5 (13.27 MB) -> ./pana_pack/recovery.img
+[i] Partition: boot	Offset: d4a000	Size 99f23a (9.62 MB) -> ./pana_pack/boot.img
+[i] Partition: system	Offset: 16ea000	Size 3d89be9 (61.54 MB) -> ./pana_pack/system.lzo
+[i]     Unpacking LZO (Please be patient) ./pana_pack/system.lzo -> ./pana_pack/system.img
+[i] Partition: system	Offset: 5474000	Size 47d5289 (71.83 MB) -> ./pana_pack/system1.lzo
+[i]     Unpacking LZO (Please be patient) ./pana_pack/system1.lzo -> ./pana_pack/system1.img
+[i]     ./pana_pack/system1.img append to ./pana_pack/system.img
+[i] Partition: system	Offset: 9c4a000	Size 3ef0506 (62.94 MB) -> ./pana_pack/system2.lzo
+[i]     Unpacking LZO (Please be patient) ./pana_pack/system2.lzo -> ./pana_pack/system2.img
+[i]     ./pana_pack/system2.img append to ./pana_pack/system.img
+[i] Partition: system	Offset: db3b000	Size 45f5a62 (69.96 MB) -> ./pana_pack/system3.lzo
+[i]     Unpacking LZO (Please be patient) ./pana_pack/system3.lzo -> ./pana_pack/system3.img
+[i]     ./pana_pack/system3.img append to ./pana_pack/system.img
+[i] Partition: system	Offset: 12131000	Size 3ecb7c0 (62.79 MB) -> ./pana_pack/system4.lzo
+[i]     Unpacking LZO (Please be patient) ./pana_pack/system4.lzo -> ./pana_pack/system4.img
+[i]     ./pana_pack/system4.img append to ./pana_pack/system.img
+[i] Partition: userdata	Offset: 15ffd000	Size 48044 (288.07 KB) -> ./pana_pack/userdata.lzo
+[i]     Unpacking LZO (Please be patient) ./pana_pack/userdata.lzo -> ./pana_pack/userdata.img
+[i] Partition: cache	Offset: 16046000	Size 13318 (76.77 KB) -> ./pana_pack/cache.lzo
+[i]     Unpacking LZO (Please be patient) ./pana_pack/cache.lzo -> ./pana_pack/cache.img
+[i] Partition: tvservice	Offset: 1605a000	Size 3c00000 (60.0 MB) -> ./pana_pack/tvservice.img
+[i] Partition: tvconfig	Offset: 19c5a000	Size a00000 (10.0 MB) -> ./pana_pack/tvconfig.img
+[i] Partition: tvdatabase	Offset: 1a65a000	Size 1000000 (16.0 MB) -> ./pana_pack/tvdatabase.img
+[i] Partition: tvcustomer	Offset: 1b65a000	Size 1000000 (16.0 MB) -> ./pana_pack/tvcustomer.img
+[i] Partition: RTPM	Offset: 1c65a000	Size 10000 (64.0 KB) -> ./pana_pack/RTPM.img
+[i] Partition: sboot	Offset: 1c66a000	Size 13800 (78.0 KB) -> ./pana_pack/sboot.img
+[i] Partition: MBOOT	Offset: 1c67e000	Size 1547e8 (1.33 MB) -> ./pana_pack/MBOOT.img
+python unpack.py allupgrade_msd338_4G_ref54_led_company.bin ./pana_pack/
+size=0x00080000
+
+['\tsetenv filesize 99f23a\n', '\tsetenv bootcmd mmc read.p 0x24D00000 boot 0x00F00000\\; bootm 0x24D00000\n', '\tsetenv recoverycmd mmc read.p 0x24D00000 recovery 0x01200000\\; bootm 0x24D00000\n', '\tsetenv bootargs console\n', '\tsetenv bootargs console=ttyS0,115200 androidboot.console=ttyS0 root=/dev/ram rw rootwait init=/init KDebug=1 delaylogo=true androidboot.selinux=permissive swiotlb=512 SAR5=ON\n', '\tsetenv bootlogo_gopidx 2\n', '\tsetenv bootlogo_buffer E_MMAP_ID_BOOTLOGO_BUFFER\n', '\tsetenv str_crc 2\n', '\tsetenv db_table 0\n', '\tsetenv verify n\n', '\tsetenv WDT_ENABLE 1\n', '\tsetenv sync_mmap 1\n', '\tsetenv MstarUpgrade_complete 1\n', '\tsetenv CEnv_PwmRef_Tmp 54\n', '\tsetenv CEnv_UpgradeCRC_Tmp 0xB537131D\n', '\tsetenv CEnv_UpgradeCRC_Val 0xB537131D\n']
+{'factorydata': 'size=0x00080000\n', 'cache': 'size=0x20000000\n', 'recovery': 'size=0x01200000\n', 'userdata': 'size=0x74400000\n', 'tvcustomer': 'size=0x01000000\n', 'misc': 'size=0x00080000\n', 'RTPM': 'size=0x00040000\n', 'boot': 'size=0x00F00000\n', 'system': 'size=0x30000000\n', 'tvconfig': 'size=0x00A00000\n', 'tvdatabase': 'size=0x01000000\n', 'tvservice': 'size=0x09600000\n'}
+./../mstar-bin-tool-32-v2/configs/panatv-PT320AT01-ref53-full.ini
