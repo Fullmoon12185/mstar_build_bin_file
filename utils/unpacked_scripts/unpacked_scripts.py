@@ -5,14 +5,21 @@ import glob
 BIN_FILE_32_315 = 'allupgrade_msd338_4G_ref54_led_company_315.bin'
 BIN_FILE_32_320 = 'allupgrade_msd338_4G_ref54_led_company_320.bin'
 
-BIN_FILE_40 = 'allupgrade_msd338_4G_1G_ref59_company.bin'
+BIN_FILE_40_JP = 'allupgrade_msd338_4G_1G_ref59_company.bin'
+
+BIN_FILE_32_JP = 'allupgrade_msd338_4G_1G_ref59_company.bin'
 
 MSTAR_32_315 = './../mstar-bin-tool-32-315-v2/'
 MSTAR_32_320 = './../mstar-bin-tool-32-320-v2/'
 
-MSTAR_40 = './../mstar-bin-tool-40-v3/'
+MSTAR_32_JP = './../mstar-bin-tool-32-jp/'
+MSTAR_40_JP = './../mstar-bin-tool-40-v2/'
+
 TV32_INI_FILE = 'panatv-PT320AT01-ref53-full.ini'
-TV40_INI_FILE = 'panatv-PT320AT01-ref59-full.ini'
+
+TV32_JP_INI_FILE = 'panatv-PT320AT01-ref59-full.ini'
+TV40_JP_INI_FILE = 'panatv-PT320AT01-ref59-full.ini'
+
 MSTAR_32_Android = 'MSTAR_32_Android/'
 MSTAR_40_Android = 'MSTAR_40_Android/'
 UNPACKED_FOLDER = 'unpacked/'
@@ -167,11 +174,30 @@ def unpacked_TV32_320():
 	else:
 		print('click to unpacking TV32_320')
 
-def unpacked_TV40():
-	if os.path.exists(MSTAR_40):
-		cwd = MSTAR_40
-		ini_file = TV40_INI_FILE
-		bin_file = BIN_FILE_40
+
+def unpacked_TV32_JP():
+	if os.path.exists(MSTAR_32_JP):
+		cwd = MSTAR_32_JP
+		ini_file = TV32_JP_INI_FILE
+		bin_file = BIN_FILE_TV32_JP
+	
+		unpacked(bin_file, cwd)
+		list_env, mmc_info = load_header_file_store_to_mmc_info(cwd + 'pana_pack/~header_script')
+		print list_env
+		print mmc_info
+		copy_env_variable_to_ini_file(cwd, ini_file, list_env, mmc_info)
+		print('')
+		print('=====================================================================')
+		print('                              DONE                                   ')
+		print('=====================================================================')
+	else:
+		print('click to unpack TV40')
+
+def unpacked_TV40_JP():
+	if os.path.exists(MSTAR_40_JP):
+		cwd = MSTAR_40_JP
+		ini_file = TV40_JP_INI_FILE
+		bin_file = BIN_FILE_40_JP
 	
 		unpacked(bin_file, cwd)
 		list_env, mmc_info = load_header_file_store_to_mmc_info(cwd + 'pana_pack/~header_script')

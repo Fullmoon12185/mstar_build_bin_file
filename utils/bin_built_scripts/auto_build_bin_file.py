@@ -3,14 +3,25 @@ import subprocess
 import glob
 
 
+USB_DRIVE = 'E:/'
 
 TV32_315_INI_FILE = 'panatv-PT320AT01-ref53-full.ini'
 TV32_320_INI_FILE = 'panatv-PT320AT01-ref53-full.ini'
+
+TV32_JP_INI_FILE = 'panatv-PT320AT01-ref53-full.ini'
+
 TV40_INI_FILE = 'panatv-PT320AT01-ref59-full.ini'
 
 MSTAR_32_315 = './../mstar-bin-tool-32-315-v2/'
 MSTAR_32_320 = './../mstar-bin-tool-32-320-v2/'
-MSTAR_40 = './../mstar-bin-tool-40-v3/'
+MSTAR_32_JP = './..//mstar-bin-tool-32_JP/'
+MSTAR_40 = './../mstar-bin-tool-40-v2/'
+
+MSTAR_32_315_BIN = ''
+MSTAR_32_320_BIN = ''
+MSTAR_32_JP_BIN = ''
+MSTAR_40_BIN = ''
+
 
 MSTAR_32_Android = 'MSTAR_32_Android/'
 MSTAR_40_Android = 'MSTAR_40_Android/'
@@ -117,11 +128,22 @@ def build_bin_file(ini_file, cwd):
 	#pass
 def build_system_file(cwd):
 	subprocess.call('START /WAIT ' + cwd + 'START.exe', shell=True)
-def copy_bin_file_to_thumb_drive():
-	pass
+
+
+def copy_bin_file_to_thumb_drive(mstar_bin_file, mstar_folder):
+	bin_file = USB_DRIVE + mstar_bin_file
+	if(os.path.exists(bin_file)):
+		remove_command = 'rm ' + bin_file
+		subprocess.call(move_command, shell = True)
+	copy_command = 'cp ' + mstar_folder + mstar_bin_file + ' ' + USB_DRIVE
+	subprocess.call(copy_command, shell=True)
+	pass	
+
 	
 	
-	
+def TV_32_Panel_315_copy():
+	copy_bin_file_to_thumb_drive(MSTAR_32_315_BIN, MSTAR_32_315)
+
 def TV_32_Panel_315():
 	if os.path.exists(MSTAR_32_315):
 		cwd = MSTAR_32_315
@@ -160,12 +182,15 @@ def TV_32_Panel_315():
 		print('\n')
 		print('\n')
 		build_bin_file(ini_file, cwd)
-		copy_bin_file_to_thumb_drive()
 	else:
 		print ('click_for_TV_32_Panel_315')
 		
 #################################################################################
 #################################################################################
+def TV_32_Panel_320_copy():
+	copy_bin_file_to_thumb_drive(MSTAR_32_320_BIN, MSTAR_32_320)
+	pass
+
 def TV_32_Panel_320():
 	if os.path.exists(MSTAR_32_320):
 		cwd = MSTAR_32_320
@@ -205,14 +230,64 @@ def TV_32_Panel_320():
 		print('\n')
 		print('\n')
 		build_bin_file(ini_file, cwd)
-		copy_bin_file_to_thumb_drive()
 	else:
 		print ('click_for_TV_32_Panel_320')
 
 #################################################################################
 #################################################################################
-		
-def TV_40():
+def TV_32_JP_copy():
+	copy_bin_file_to_thumb_drive(MSTAR_32_JP_BIN, MSTAR_32_JP)
+	pass
+
+def TV_32_JP():
+	if os.path.exists(MSTAR_32_JP):
+		cwd = MSTAR_32_JP
+		mstar_android = cwd + MSTAR_32_Android
+		ini_file = TV32_JP_INI_FILE
+	
+	
+		delete_user_apks(mstar_android + USER_SYSTEM_APKS)
+		print('\n')
+		print('-------------------------------------------------------------------')
+		print('----------------------- Copying new apks --------------------------')
+		print('-------------------------------------------------------------------')
+		print('\n')
+		print('\n')
+		copy_apks(mstar_android + USER_SYSTEM_APKS)
+		print('--------------------------------------------------------------------')
+		print('----= ---------------- Building system image -----------------------')
+		print('--------------------------------------------------------------------')
+		print('\n')
+		print('\n')
+		build_system_file(mstar_android)
+		print('-------------------------------------------------------------------')
+		print('--------------------- Copying system image ------------------------')
+		print('-------------------------------------------------------------------')
+		print('\n')
+		print('\n')
+		copy_system_image(cwd, mstar_android)
+		print('-------------------------------------------------------------------')
+		print ('---------------------- Modifying CRC -----------------------------')
+		print('-------------------------------------------------------------------')
+		print('\n')
+		print('\n')
+		modify_CRC(cwd, ini_file)
+		print('-------------------------------------------------------------------')
+		print('--------------------- Building bin file ---------------------------')
+		print('-------------------------------------------------------------------')
+		print('\n')
+		print('\n')
+		build_bin_file(ini_file, cwd)
+	else:
+		print ('click_for_TV_32_JP')
+
+#################################################################################
+#################################################################################		
+def TV_40_JP_copy():
+	copy_bin_file_to_thumb_drive(MSTAR_40_BIN, MSTAR_40)
+	pass
+
+def TV_40_JP():
 	if os.path.exists(MSTAR_40):
 		cwd = MSTAR_40
 		mstar_android = cwd + MSTAR_40_Android
