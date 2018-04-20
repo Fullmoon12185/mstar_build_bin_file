@@ -1,27 +1,63 @@
 import os.path
 import subprocess
 import glob
-
+######################################################################
 BIN_FILE_32_315 = 'allupgrade_msd338_4G_ref54_led_company_315.bin'
+BIN_FILE_32_315_PANA = 'allupgrade_msd338_4G_ref54_led_company_315.bin'
+
 BIN_FILE_32_320 = 'allupgrade_msd338_4G_ref54_led_company_320.bin'
-
+BIN_FILE_TV32_JP = 'allupgrade_msd338_4G_1G_ref30_company.bin'
 BIN_FILE_40_JP = 'allupgrade_msd338_4G_1G_ref59_company.bin'
+BIN_FILE_40_HL_PANA = 'allupgrade_msd338_4G_ref68_company.bin'
 
-BIN_FILE_32_JP = 'allupgrade_msd338_4G_1G_ref59_company.bin'
+BIN_FILE_50_JP = 'allupgrade_msd338_8G_1G_ref60_company.bin'
+BIN_FILE_50_JP_PANA = 'allupgrade_msd338_8G_1G_ref60_company.bin'
+BIN_FILE_50_JP_SQ5 = 'allupgrade_msd338_8G_1G_ref60_company_sq5.bin'
+BIN_FILE_50_JP_SQ5_PANA = 'allupgrade_msd338_8G_1G_ref60_company_sq5.bin'
 
+BIN_FILE_55_HL = 'allupgrade_msd338_8G_1G_ref60_company_55inch.bin'
+
+BIN_FILE_55_HL_PANA = 'allupgrade_msd338_8G_1G_ref60_company_55inch.bin'
+######################################################################
 MSTAR_32_315 = './../mstar-bin-tool-32-315-v2/'
+MSTAR_32_315_PANA = './../mstar-bin-tool-32-315-v2-pana/'
 MSTAR_32_320 = './../mstar-bin-tool-32-320-v2/'
-
 MSTAR_32_JP = './../mstar-bin-tool-32-jp/'
-MSTAR_40_JP = './../mstar-bin-tool-40-v2/'
+MSTAR_40_JP = './../mstar-bin-tool-40-v3/'
+MSTAR_40_HL_PANA = './../mstar-bin-tool-40-v3-HL-pana/'
+MSTAR_50_JP = './../mstar-bin-tool-50-v3/'
+MSTAR_50_JP_PANA = './../mstar-bin-tool-50-v3-pana/'
+MSTAR_50_JP_SQ5 = './../mstar-bin-tool-50-v3-sq5/'
+MSTAR_50_JP_SQ5_PANA = './../mstar-bin-tool-50-v3-sq5-pana/'
 
+MSTAR_55_HL = './../mstar-bin-tool-55-v3/'
+MSTAR_55_HL_PANA = './../mstar-bin-tool-55-v3-pana/'
+######################################################################
 TV32_INI_FILE = 'panatv-PT320AT01-ref53-full.ini'
-
-TV32_JP_INI_FILE = 'panatv-PT320AT01-ref59-full.ini'
+TV32_INI_FILE_PANA = 'panatv-PT320AT01-ref53-full.ini'
+TV32_JP_INI_FILE = 'allupgrade_msd338_4G_1G_ref30.ini'
 TV40_JP_INI_FILE = 'panatv-PT320AT01-ref59-full.ini'
+TV40_HL_INI_FILE_PANA = 'allupgrade_msd338_4G_ref68.ini'
 
+TV50_JP_INI_FILE = 'allupgrade_msd338_8G_1G_ref60.ini'
+TV50_JP_INI_FILE_PANA = 'allupgrade_msd338_8G_1G_ref60.ini'
+TV50_JP_SQ5_INI_FILE = 'allupgrade_msd338_8G_1G_ref60.ini'
+TV50_JP_SQ5_INI_FILE_PANA = 'allupgrade_msd338_8G_1G_ref60.ini'
+
+TV55_HL_INI_FILE = 'allupgrade_msd338_8G_1G_ref60.ini'
+TV55_HL_INI_FILE_PANA = 'allupgrade_msd338_8G_1G_ref60.ini'
+######################################################################
 MSTAR_32_Android = 'MSTAR_32_Android/'
+MSTAR_32_Android_PANA = 'MSTAR_32_Android/'
 MSTAR_40_Android = 'MSTAR_40_Android/'
+MSTAR_40_Android_HL_PANA = 'MSTAR_40_Android/'
+
+MSTAR_50_Android = 'MSTAR_50_Android/'
+MSTAR_50_Android_PANA = 'MSTAR_50_Android/'
+
+MSTAR_55_Android = 'MSTAR_55_Android/'
+MSTAR_55_Android_PANA = 'MSTAR_55_Android/'
+
 UNPACKED_FOLDER = 'unpacked/'
 
 
@@ -154,7 +190,23 @@ def unpacked_TV32_315():
 		print('=====================================================================')
 	else:
 		print('click to unpack TV32_315')
+def unpacked_TV32_315_pana():
+	if os.path.exists(MSTAR_32_315_PANA):
+		cwd = MSTAR_32_315_PANA
+		ini_file = TV32_INI_FILE_PANA
+		bin_file = BIN_FILE_32_315_PANA
 		
+		unpacked(bin_file, cwd)
+		list_env, mmc_info = load_header_file_store_to_mmc_info(cwd + 'pana_pack/~header_script')
+		print list_env
+		print mmc_info
+		copy_env_variable_to_ini_file(cwd, ini_file, list_env, mmc_info)
+		print('')
+		print('=====================================================================')
+		print('                              DONE                                   ')
+		print('=====================================================================')
+	else:
+		print('click to unpack TV32_PANA_315')		
 		
 def unpacked_TV32_320():
 	if os.path.exists(MSTAR_32_320):
@@ -210,6 +262,132 @@ def unpacked_TV40_JP():
 		print('=====================================================================')
 	else:
 		print('click to unpack TV40')
+
+def unpacked_TV40_HL_pana():
+	if os.path.exists(MSTAR_40_HL_PANA):
+		cwd = MSTAR_40_HL_PANA
+		ini_file = TV40_HL_INI_FILE_PANA
+		bin_file = BIN_FILE_40_HL_PANA
+	
+		unpacked(bin_file, cwd)
+		list_env, mmc_info = load_header_file_store_to_mmc_info(cwd + 'pana_pack/~header_script')
+		print list_env
+		print mmc_info
+		copy_env_variable_to_ini_file(cwd, ini_file, list_env, mmc_info)
+		print('')
+		print('=====================================================================')
+		print('                              DONE                                   ')
+		print('=====================================================================')
+	else:
+		print('click to unpack TV40 HL PANA')
+
+def unpacked_TV50_JP():
+	if os.path.exists(MSTAR_50_JP):
+		cwd = MSTAR_50_JP
+		ini_file = TV50_JP_INI_FILE
+		bin_file = BIN_FILE_50_JP
+	
+		unpacked(bin_file, cwd)
+		list_env, mmc_info = load_header_file_store_to_mmc_info(cwd + 'pana_pack/~header_script')
+		print list_env
+		print mmc_info
+		copy_env_variable_to_ini_file(cwd, ini_file, list_env, mmc_info)
+		print('')
+		print('=====================================================================')
+		print('                              DONE                                   ')
+		print('=====================================================================')
+	else:
+		print('click to unpack TV50')
+def unpacked_TV50_JP_pana():
+	if os.path.exists(MSTAR_50_JP_PANA):
+		cwd = MSTAR_50_JP_PANA
+		ini_file = TV50_JP_INI_FILE_PANA
+		bin_file = BIN_FILE_50_JP_PANA
+	
+		unpacked(bin_file, cwd)
+		list_env, mmc_info = load_header_file_store_to_mmc_info(cwd + 'pana_pack/~header_script')
+		print list_env
+		print mmc_info
+		copy_env_variable_to_ini_file(cwd, ini_file, list_env, mmc_info)
+		print('')
+		print('=====================================================================')
+		print('                              DONE                                   ')
+		print('=====================================================================')
+	else:
+		print('click to unpack TV50 pana')
+
+def unpacked_TV50_JP_SQ5():
+	if os.path.exists(MSTAR_50_JP_SQ5):
+		cwd = MSTAR_50_JP_SQ5
+		ini_file = TV50_JP_SQ5_INI_FILE
+		bin_file = BIN_FILE_50_JP_SQ5
+	
+		unpacked(bin_file, cwd)
+		list_env, mmc_info = load_header_file_store_to_mmc_info(cwd + 'pana_pack/~header_script')
+		print list_env
+		print mmc_info
+		copy_env_variable_to_ini_file(cwd, ini_file, list_env, mmc_info)
+		print('')
+		print('=====================================================================')
+		print('                              DONE                                   ')
+		print('=====================================================================')
+	else:
+		print('click to unpack TV50 SQ 5')
+
+def unpacked_TV50_JP_SQ5_pana():
+	if os.path.exists(MSTAR_50_JP_SQ5_PANA):
+		cwd = MSTAR_50_JP_SQ5_PANA
+		ini_file = TV50_JP_SQ5_INI_FILE_PANA
+		bin_file = BIN_FILE_50_JP_SQ5_PANA
+	
+		unpacked(bin_file, cwd)
+		list_env, mmc_info = load_header_file_store_to_mmc_info(cwd + 'pana_pack/~header_script')
+		print list_env
+		print mmc_info
+		copy_env_variable_to_ini_file(cwd, ini_file, list_env, mmc_info)
+		print('')
+		print('=====================================================================')
+		print('                              DONE                                   ')
+		print('=====================================================================')
+	else:
+		print('click to unpack TV50 SQ5 PANA')
+
+
+def unpacked_TV55_HL():
+	if os.path.exists(MSTAR_55_HL):
+		cwd = MSTAR_55_HL
+		ini_file = TV55_HL_INI_FILE
+		bin_file = BIN_FILE_55_HL
+	
+		unpacked(bin_file, cwd)
+		list_env, mmc_info = load_header_file_store_to_mmc_info(cwd + 'pana_pack/~header_script')
+		print list_env
+		print mmc_info
+		copy_env_variable_to_ini_file(cwd, ini_file, list_env, mmc_info)
+		print('')
+		print('=====================================================================')
+		print('                              DONE                                   ')
+		print('=====================================================================')
+	else:
+		print('click to unpack TV50')
+
+def unpacked_TV55_HL_pana():
+	if os.path.exists(MSTAR_55_HL_PANA):
+		cwd = MSTAR_55_HL_PANA
+		ini_file = TV55_HL_INI_FILE_PANA
+		bin_file = BIN_FILE_55_HL_PANA
+	
+		unpacked(bin_file, cwd)
+		list_env, mmc_info = load_header_file_store_to_mmc_info(cwd + 'pana_pack/~header_script')
+		print list_env
+		print mmc_info
+		copy_env_variable_to_ini_file(cwd, ini_file, list_env, mmc_info)
+		print('')
+		print('=====================================================================')
+		print('                              DONE                                   ')
+		print('=====================================================================')
+	else:
+		print('click to unpack TV50 PANA')
 
 def test_import():
 	print('Unpacked scripts imported')			
