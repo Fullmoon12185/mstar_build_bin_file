@@ -5,7 +5,7 @@ import subprocess
 import glob
 
 BIN_FILE_32 = 'allupgrade_msd338_4G_ref54_led_company.bin'
-BIN_FILE_40 = 'allupgrade_msd338_4G_1G_ref59_company.bin'
+BIN_FILE_40 = ''
 MSTAR_32 = './../mstar-bin-tool-32-v2/'
 MSTAR_40 = './../mstar-bin-tool-40-v2/'
 TV32_INI_FILE = 'panatv-PT320AT01-ref53-full.ini'
@@ -120,19 +120,18 @@ def copy_env_variable_to_ini_file(cwd, ini_file, list_env, mmc_info):
 	subprocess.call(rename_command, shell=True)
 	
 if __name__ == "__main__":
-	if os.path.exists(MSTAR_40):
-		cwd = MSTAR_40
-		ini_file = TV40_INI_FILE
-		bin_file = BIN_FILE_40
-	elif os.path.exists(MSTAR_32):
+	if os.path.exists(MSTAR_32):
 		cwd = MSTAR_32
 		ini_file = TV32_INI_FILE
 		bin_file = BIN_FILE_32
+	elif os.path.exists(MSTAR_40):
+		cwd = MSTAR_40
+		ini_file = TV40_INI_FILE
+		bin_file = BIN_FILE_40
 	
-	unpacked_command = 'python unpack.py ' + bin_file +  ' ./pana_pack/'
+	unpacked_command = 'START /WAIT python unpack.py ' + bin_file +  ' ./pana_pack/'
 	print unpacked_command
 	subprocess.call(unpacked_command, cwd = cwd, shell = True)
-	
 	list_env, mmc_info = load_header_file_store_to_mmc_info(cwd + 'pana_pack/~header_script')
 	print list_env
 	print mmc_info

@@ -6,7 +6,7 @@ import glob
 TV32_INI_FILE = 'panatv-PT320AT01-ref53-full.ini'
 TV40_INI_FILE = 'panatv-PT320AT01-ref59-full.ini'
 MSTAR_32 = './../mstar-bin-tool-32-v2/'
-MSTAR_40 = './../mstar-bin-tool-40-v2/'
+MSTAR_40 = './../mstar-bin-tool-40-v3/'
 
 MSTAR_32_Android = 'MSTAR_32_Android/'
 MSTAR_40_Android = 'MSTAR_40_Android/'
@@ -70,17 +70,25 @@ def copy_system_image(cwd, mstar_android):
 	rename_new_image  = 'ren ' + cwd + PANA_PACK  + NEW_SYSTEM_IMAGE_FILE + ' ' + SYSTEM_IMAGE_FILE
 	# copy_new_image = copy_new_image.replace('/', '/');
 	# remove_old_image = remove_old_image.replace('/', '/');
-	# rename_new_image = rename_new_image.replace('/', '/');
-	
-	print copy_new_image
-	print remove_old_image
-	print rename_new_image
-	if(os.path.isfile(cwd + NEW_SYSTEM_IMAGE_FILE)):
-		subprocess.call(copy_new_image, shell=True) 
+	rename_new_image = rename_new_image.replace('/', '\\');
+	print cwd + mstar_android + NEW_SYSTEM_IMAGE_FILE
+	if(os.path.isfile(cwd + mstar_android + NEW_SYSTEM_IMAGE_FILE)):
+		print copy_new_image
+		process = subprocess.call(copy_new_image, shell=True)
 		if(os.path.isfile( cwd + PANA_PACK + SYSTEM_IMAGE_FILE)):
+			print remove_old_image
 			subprocess.call(remove_old_image, shell=True) 
-		subprocess.call(rename_new_image, shell=True) 
+		subprocess.call(rename_new_image, shell=True)
+		print rename_new_image	
 
+def delete_user_apks(user_system_apks):
+	list_apks = glob.glob(user_system_apks + '*.apk')
+	print list_apks
+	for apk in list_apks:
+		apk = apk.replace('\\', '/');
+		delete_apk = 'rm ' + apk
+		print delete_apk
+		subprocess.call(delete_apk, shell=True)
 def copy_apks(user_system_apks):
 	list_apks = glob.glob(NEW_USER_APKS + '*.apk')
 	print list_apks
@@ -103,16 +111,12 @@ def copy_bin_file_to_thumb_drive():
 	
 	
 if __name__ == "__main__":
-	if os.path.exists(MSTAR_32):
-		cwd = MSTAR_32
-		mstar_android = cwd + MSTAR_32_Android
-		ini_file = TV32_INI_FILE
-	elif os.path.exists(MSTAR_40):
+	if os.path.exists(MSTAR_40):
 		cwd = MSTAR_40
 		mstar_android = cwd + MSTAR_40_Android
 		ini_file = TV40_INI_FILE
 	
-	
+	delete_user_apks(mstar_android + USER_SYSTEM_APKS);
 	print('\n')
 	print('-------------------------------------------------------------------')
 	print('----------------------- Copy new apks -----------------------------')
