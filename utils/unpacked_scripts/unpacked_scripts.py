@@ -73,10 +73,10 @@ TV50_JP_SQ5_INI_FILE_PANA = 'allupgrade_msd338_8G_1G_ref60.ini'
 TV55_HL_INI_FILE_PANA = 'allupgrade_msd338_8G_1G_ref60.ini'
 ######################################################################
 
-MSTAR_ANDROID = MSTAR_Android
+MSTAR_ANDROID = 'MSTAR_Android'
 UNPACKED_FOLDER = 'unpacked/'
 SYSTEM_IMAGE_FILE = 'system.img'
-
+temp = 'abc'
 def extract_size(line):
 	return 'size=' + line.split()[-1] + '\n' 
 
@@ -217,26 +217,33 @@ def make_a_user_apk_foler():
 	process = subprocess.call(mkdir_user_apk_folder, shell=True)
 	pass
 def modify_build_prop(cwd):
-	file_name = cwd + MSTAR_ANDROID + 'temp/system/build.prop'
-	print file_name
-	#file_name = file_name.replace('/', '\\')
-	temp_file_name =  cwd + MSTAR_ANDROID + 'temp/system/build.prop.temp'
-	fread = open(file_name, 'r')
-	fwrite = open(temp_file_name, 'w')
-	for line in fread:
-		if '' in line:
-		elif '' in line:
-		elif '' in line:
-		elif '' in line:			
-		else:
-			fwrite.write(line)		
-	fread.close()
-	fwrite.close()
-	# remove_command = 'rm ' + file_name
-	# rename_command = 'ren ' + temp_file_name + ' ' + ini_file
-	# rename_command = rename_command.replace('/', '\\')
-	# subprocess.call(remove_command, shell=True)
-	# subprocess.call(rename_command, shell=True)
+    file_name = cwd + MSTAR_ANDROID + 'temp/system/build.prop'
+    print file_name
+    #file_name = file_name.replace('/', '\\')
+    temp_file_name =  cwd + MSTAR_ANDROID + 'temp/system/build.prop.temp'
+    fread = open(file_name, 'r')
+    fwrite = open(temp_file_name, 'w')
+
+    for line in fread:
+        if ('ro.config.low_ram' in line):
+            fwrite.write('ro.config.low_ram=false')
+        elif ('heapstartsize' in line):
+            fwrite.write('dalvik.vm.heapstartsize=8m')
+        elif ('heapgrowthlimit' in line):
+            fwrite.write('dalvik.vm.heapgrowthlimit=128m')
+        elif ('heapsize' in line):
+            fwrite.write('dalvik.vm.heapsize=384m')	
+        elif ('heapmaxfree' in line):
+            fwrite.write('dalvik.vm.heapmaxfree=8m')		
+        else:
+            fwrite.write(line)		
+    fread.close()
+    fwrite.close()
+    # remove_command = 'rm ' + file_name
+    # rename_command = 'ren ' + temp_file_name + ' ' + ini_file
+    # rename_command = rename_command.replace('/', '\\')
+    # subprocess.call(remove_command, shell=True)
+    # subprocess.call(rename_command, shell=True)
 
 
 
