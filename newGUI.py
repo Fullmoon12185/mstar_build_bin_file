@@ -37,7 +37,7 @@ if __name__ == '__main__':
     root = Tk()
     style = ttk.Style()
     root.title('Building firmware for UBC LOGO')
-    root.geometry("350x300") #You want the size of the app to be 500x500
+    # root.geometry("350x300") #You want the size of the app to be 500x500
     #root.resizable(0, 0) #Don't allow resizing in the x or y direction
     #configuration = Checkbar(root, ['Unpack', 'UBC', 'PACK'])
     #tgl = Checkbar(root, ['TV40EK','TV40DM','TV43DM', 'TV50PE5', 'TV50SQ8', 'TV55'])
@@ -102,6 +102,20 @@ if __name__ == '__main__':
     lboxListOfPanels.bind('<<ListboxSelect>>', showOptions)
     lboxListOfOptions.bind('<<ListboxSelect>>', showOptions)
     lboxListOfLogos.bind('<<ListboxSelect>>', showOptions)
+
+
+
+    def Start_Build_Bin_File(): 
+        # if(radioOperation.get() == 0): #unpack option
+        #     Unpack_Bin_File()
+        # elif (radioOperation.get() == 1): #pack option
+        #     Pack_Bin_File()
+        print('Start_Build_Bin_File')
+    ttkButtonBuildBinFile = ttk.Button(listPanelsFrame, text='BUILD', command=Start_Build_Bin_File, default='active')
+    ttkButtonBuildBinFile.grid(column=4, row=4, sticky=E)
+    ttkButtonQuit = ttk.Button(listPanelsFrame, text='Quit', command=root.quit, default = 'active')
+
+    ttkButtonQuit.grid(column=4, row=5, sticky=E)
     # Grid all the widgets
 
     
