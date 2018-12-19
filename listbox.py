@@ -78,6 +78,7 @@ lbox.grid(column=0, row=0, rowspan=6, sticky=(N,S,E,W))
 lbl.grid(column=1, row=0, padx=10, pady=5)
 g1.grid(column=1, row=1, sticky=W, padx=20)
 g2.grid(column=1, row=2, sticky=W, padx=20)
+
 g3.grid(column=1, row=3, sticky=W, padx=20)
 send.grid(column=2, row=4, sticky=E)
 sentlbl.grid(column=1, row=5, columnspan=2, sticky=N, pady=5, padx=5)
