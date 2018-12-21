@@ -66,6 +66,7 @@ def copy_env_variable_to_ini_file(cwd, binFileName, list_env, mmc_info):
     list_index = 0
     env_name = 'nothing'
     index = 0
+    bool_modify_firmware_filename = 0
     # search for lines that contain 'CEnv_UpgradeCRC_Tmp' and 'CEnv_UpgradeCRC_Val'
     # get the CRC number and add it by 1
     for line in fread:
@@ -96,8 +97,12 @@ def copy_env_variable_to_ini_file(cwd, binFileName, list_env, mmc_info):
                 env_name = 'tvcustomer'
 
 
-            if 'FirmwareFileName' in line:
-                fwrite.write('FirmwareFileName=' + binFileName + '\n')
+            if 'FirmwareFileName=' in line:
+                if bool_modify_firmware_filename == 0:
+                    fwrite.write('FirmwareFileName=' + binFileName + '\n')
+                    bool_modify_firmware_filename = 1
+                else:
+                    fwrite.write(line)
             elif 'setenv' in line:
                 fwrite.write(list_env[list_index])
                 list_index = list_index + 1
@@ -162,7 +167,14 @@ def copy_system_file(cwd):
 
 def extract_system_file(cwd):
 	subprocess.call('START /WAIT ' + cwd + MSTAR_ANDROID + 'START.exe', shell=True)
-
+def delete_old_launcher():
+    list_apk = os.listdir('.\\..\\mstar-bin-tool\\MSTAR_Android\\temp\\system\\app\\')
+    for item in list_apk:
+        if 'launcher' in item:
+            print item
+            delete_command = 'rm .\\..\\mstar-bin-tool\\MSTAR_Android\\temp\\system\\app\\' + item
+            subprocess.call(delete_command, shell=True)
+    
 def copy_libdecode():
     if(os.path.exists('.\\..\\mstar-bin-tool\\MSTAR_Android\\temp\\system\\lib\\libdecode.so') == False):
         copy_lib = 'cp .\\..\\Database\Libs\\libdecode.so .\\..\\mstar-bin-tool\\MSTAR_Android\\temp\\system\\lib'
@@ -221,6 +233,7 @@ def unpack_procedure(cwd, ini_file = None, bin_file = None, binpath=None):
         copy_system_file(cwd)
         extract_system_file(cwd)
         copy_libdecode()
+        delete_old_launcher()
         make_a_user_apk_folder()
         modify_build_prop(cwd)
         print('=====================================================================')

@@ -9,13 +9,12 @@ SANCO_LOGO = 0
 USB_DRIVE = 'E:/'
 
 
-
+INI_FILE = 'config.ini'
 MSTAR_BIN_TOOL = './../mstar-bin-tool/'
 MSTAR_ANDROID = 'MSTAR_Android/'
 USER_APKS = 'temp/system/media/user_system_apks/'
 SYSTEM_APKS = 'temp/system/app/'
-BOOT_ANIMATION = 'temp/system/media/'
-
+MEDIA_FOLDER = 'temp/system/media/'
 
 CONFIGS = 'configs/'
 PANA_PACK = 'pana_pack/'
@@ -23,6 +22,7 @@ PANA_PACK = 'pana_pack/'
 NEW_SYSTEM_IMAGE_FILE = 'new_system.img'
 SYSTEM_IMAGE_FILE = 'system.img'
 
+SAVING_FOLDER = 'C:\\Users\\NGUYEN\\Dropbox\\UBC\\TV_ROM_Release\\TV_SMARTTV_UBCTV\\'
 
 ##########################################################################################
 ##########################################################################################
@@ -100,8 +100,8 @@ def delete_user_apks(user_system_apks):
 		print delete_apk
 		subprocess.call(delete_apk, shell=True)
 		
-def copy_common_user_apks(user_system_apks):
-	list_apks = glob.glob(NEW_USER_APKS + '*.apk')
+def copy_common_user_apks(user_apks, user_system_apks):
+	list_apks = glob.glob(user_apks + '*.apk')
 	print list_apks
 	for apk in list_apks:
 		apk = apk.replace('\\', '/')
@@ -110,11 +110,30 @@ def copy_common_user_apks(user_system_apks):
 		print copy_apk
 		subprocess.call(copy_apk, shell=True)
 
-def copy_boot_animation(option):
-    copy_boot_animation_command = 'cp .\\..\\Database\\BootAnimation\\' + option + '\\bootanimiation.zp ' + '.\\..\\mstar-bin-tool\\MSTAR_Android\\temp\\system\\media'
-    print copy_boot_animation_command
-    subprocess.call(copy_boot_animation_command, shell=True)
-
+def copy_common_system_apks(common_system_apks, system_apks):
+    if(os.path.exists(common_system_apks)):
+        for item in os.listdir(common_system_apks):
+            copy_common_system_apks_command = 'cp ' + common_system_apks + '\\' + item + ' ' + system_apks
+            print 'copy_common_system_apks_command'
+            print(copy_common_system_apks_command)
+            subprocess.call(copy_common_system_apks_command, shell=True)
+            
+def copy_launcher(launcher, system_launcher):
+    if(os.path.exists(launcher)):
+        for item in os.listdir(launcher):
+            copy_launcher_command = 'cp ' + launcher + '\\' + item + ' ' + system_launcher
+            print 'copy_launcher_command'
+            print(copy_launcher_command)
+            subprocess.call(copy_launcher_command, shell=True)
+            break
+def copy_boot_animation(boot_animation, media_folder):
+    if(os.path.exists(boot_animation)):
+        for item in os.listdir(boot_animation):
+            copy_boot_animation_command = 'cp ' + boot_animation + '\\' + item + ' ' + media_folder
+            print 'copy_boot_animation_command'
+            print(copy_boot_animation_command)
+            subprocess.call(copy_boot_animation_command, shell=True)
+            break
 def copy_system_apks_for_voice_version():
 	list_apks = glob.glob(NEW_SYSTEM_APKS_VOICE_VERSION + '*.apk')
 	print list_apks
@@ -125,51 +144,19 @@ def copy_system_apks_for_voice_version():
 		print copy_apk
 		subprocess.call(copy_apk, shell=True)
 
-def copy_system_apks_for_no_voice_version():
-	list_apks = glob.glob(NEW_SYSTEM_APKS_NO_VOICE_VERSION + '*.apk')
-	print list_apks
-	for apk in list_apks:
-		apk = apk.replace('\\', '/')
-		user_system_apks = user_system_apks.replace('\\', '/')
-		copy_apk = 'cp ' + apk + ' ' + user_system_apks
-		print copy_apk
-		subprocess.call(copy_apk, shell=True)
 
-def copy_apks_for_voice_version():
-	list_apks = glob.glob(NEW_USER_APKS + '*.apk')
-	print list_apks
-	for apk in list_apks:
-		apk = apk.replace('\\', '/')
-		user_system_apks = user_system_apks.replace('\\', '/')
-		copy_apk = 'cp ' + apk + ' ' + user_system_apks
-		print copy_apk
-		subprocess.call(copy_apk, shell=True)
-
-def copy_feature_1(option):
-	list_apks = glob.glob(NEW_USER_APKS + '*.apk')
-	print list_apks
-	for apk in list_apks:
-		apk = apk.replace('\\', '/')
-		user_system_apks = user_system_apks.replace('\\', '/')
-		copy_apk = 'cp ' + apk + ' ' + user_system_apks
-		print copy_apk
-		subprocess.call(copy_apk, shell=True)
-
-def copy_launcher(option):
-	copy_launcher_command = 'cp ' + '.\\..\\Database\\APKs\\Launchers\\' + option + '\\*launcher*.apk ' '.\\..\\mstar-bin-tool\\MSTAR_Android\\temp\\system\\app'
-    print(copy_launcher_command)
-    subprocess.call(copy_launcher_command, shell=True)
 
 def build_bin_file(ini_file, cwd):
-	command = 'python pack.py ' + 'configs/' + ini_file
-	process = subprocess.Popen(command, cwd = cwd, stdout=subprocess.PIPE)
-	output, err = process.communicate()
-	print output
-	print('=================================================================')
-	print('                            COMPLETED                            ')
-	print('=================================================================')
-	#subprocess.call('python pack.py ' + 'configs/' + ini_file, cwd = cwd, shell=True) 
-	#pass
+    command = 'python pack.py ' + 'configs/' + ini_file
+    print command
+    print cwd
+    process = subprocess.call(command, cwd = cwd, shell=True)
+    
+    print('=================================================================')
+    print('                            COMPLETED                            ')
+    print('=================================================================')
+    #subprocess.call('python pack.py ' + 'configs/' + ini_file, cwd = cwd, shell=True) 
+    #pass
 def build_system_file(cwd):
 	subprocess.call('START /WAIT ' + cwd + 'START.exe', shell=True)
 
@@ -189,50 +176,66 @@ def copy_bin_file_to_thumb_drive(mstar_bin_file, mstar_folder):
 	print('=================================================================')
 	pass	
 
-def build_rom_procedure(cwd, mstar_android, launcher, boot_animation, ini_file, voice_option = 0):
-	delete_user_apks(mstar_android + USER_APKS)
+def build_rom_procedure(user_apks, system_apks, launcher, boot_animation):
+	delete_user_apks(MSTAR_BIN_TOOL + MSTAR_ANDROID + USER_APKS)
 	print('\n')
 	print('----------------------------------------------------------------------')
 	print('----------------------- Copying new apks -----------------------------')
 	print('----------------------------------------------------------------------')
 	print('\n')
 	print('\n')
-	copy_common_user_apks(mstar_android + USER_APKS)
-	copy_system_apks(mstar_android + SYSTEM_APKS)
-	copy_launcher(launcher)
-	copy_boot_animation(boot_animation)
-	if(voice_option == 0):
-		copy_apks_for_voice_version()
-	else:
-		copy_apks_for_no_voice_version()
+	copy_common_user_apks(user_apks, MSTAR_BIN_TOOL + MSTAR_ANDROID + USER_APKS)
+	copy_common_system_apks(system_apks, MSTAR_BIN_TOOL + MSTAR_ANDROID + SYSTEM_APKS)
+	copy_launcher(launcher, MSTAR_BIN_TOOL + MSTAR_ANDROID + SYSTEM_APKS)
+	copy_boot_animation(boot_animation, MSTAR_BIN_TOOL + MSTAR_ANDROID + MEDIA_FOLDER)
+	
 
 	print('----------------------------------------------------------------------')
 	print('---------------------- Building a system image -----------------------')
 	print('----------------------------------------------------------------------')
 	print('\n')
 	print('\n')
-	build_system_file(mstar_android)
+	build_system_file(MSTAR_BIN_TOOL + MSTAR_ANDROID)
 	print('----------------------------------------------------------------------')
 	print('--------------------- Copying a system image -------------------------')
 	print('----------------------------------------------------------------------')
 	print('\n')
 	print('\n')
-	copy_system_image(cwd, mstar_android)
+	copy_system_image(MSTAR_BIN_TOOL, MSTAR_BIN_TOOL + MSTAR_ANDROID)
 	print('----------------------------------------------------------------------')
 	print ('---------------------- Modifying CRC --------------------------------')
 	print('----------------------------------------------------------------------')
 	print('\n')
 	print('\n')
-	modify_CRC(cwd, ini_file)
+	modify_CRC(MSTAR_BIN_TOOL, INI_FILE)
 	print('----------------------------------------------------------------------')
 	print('--------------------- Building bin file ------------------------------')
 	print('----------------------------------------------------------------------')
 	print('\n')
 	print('\n')
-	build_bin_file(ini_file, cwd)
+	build_bin_file(INI_FILE, MSTAR_BIN_TOOL)
 	pass	
 
 
-def Build_System_Image():
-    build_rom_procedure(cwd = MSTAR_BIN_TOOL, mstar_android = MSTAR_ANDROID, )
+def Build_System_Image(user_apks, system_apks, launcher, boot_animation):
+    print user_apks
+    print system_apks
+    print launcher
+    print boot_animation
+    build_rom_procedure(user_apks = user_apks, \
+                        system_apks = system_apks,\
+                        launcher = launcher, \
+                        boot_animation = boot_animation)
 
+def Save_Bin_File_To_Dropbox(path, bin_file_name):
+    absolutePath = SAVING_FOLDER + path
+    if(os.path.exists(absolutePath) == False):
+        mkdir_command = 'mkdir ' + absolutePath
+        print mkdir_command
+        subprocess.call(mkdir_command, shell = True)
+    copy_command = 'cp ' + MSTAR_BIN_TOOL + bin_file_name + ' ' + absolutePath
+    print copy_command
+    subprocess.call(copy_command, shell = True)
+    print('=================================================================')
+    print('                            Done                                 ')
+    print('=================================================================')
