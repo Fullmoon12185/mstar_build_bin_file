@@ -3,19 +3,28 @@ import subprocess
 
 from Tkinter import *
 import ttk
+from glob import glob
+import tkMessageBox
+from idlelib.TreeWidget import ScrolledCanvas, FileTreeItem, TreeNode
+
+
 from utils.bin_built_scripts import auto_build_bin_file
 from utils.unpacked_scripts import unpacked_scripts
-from glob import glob
 
-import tkMessageBox
+from utils.unpacked_scripts_338_toptech import unpacked_scripts_338_toptech
+from utils.bin_built_scripts_338_toptech import auto_build_bin_file_338_toptech
 
+from utils.unpacked_scripts_638_toptech import unpacked_scripts_638_toptech
+from utils.bin_built_scripts_638_toptech import auto_build_bin_file_638_toptech
  
+import datetime
 
+import logging
 
 
 SUPPLIER_PATH = '.\..\Database\Suppliers\\'
 APKS_PATH = '.\..\Database\Apks\\'
-
+BOOT_ANIMATION_PATH = '.\\..\\Database\\BootAnimation\\'
 configurations = []
 num_of_rows = 5
 
@@ -44,7 +53,7 @@ COLUMN_BUTTON = range (num_of_column)
 
 SAVING_BIN_FILE_PATH = num_of_column
 
-
+FONT_SIZE = 15
 
 ROW_SPAN = 5
 
@@ -70,39 +79,85 @@ if __name__ == '__main__':
     root.grid_rowconfigure(0,weight=1)
     
     relativePath_Apks = '.\\..\\Database\\APKs\\'
-    relativePath_BootAnimation = '.\\..\\Database\\BootAnimation\\'
+    relativePath_BootAnimation = BOOT_ANIMATION_PATH + 'TV32\\'
     relativePath_SystemApks = '.\\..\\mstar-bin-tool\\MSTAR_Android\\temp\\system\\app\\'
 
     relativePath = '.\\..\\Database\\Suppliers\\'
-    tupleOfSuppliers = tuple(os.listdir(relativePath))
-    
+    if(os.path.exists(relativePath)):
+        tupleOfSuppliers = tuple(os.listdir(relativePath))
+    else:
+        tupleOfSuppliers = None
+
     relativePath_Supplier =  relativePath + 'CVT\\'
-    tupleOfChipsets = tuple(os.listdir(relativePath_Supplier))
+    if(os.path.exists(relativePath_Supplier)):
+        tupleOfChipsets = tuple(os.listdir(relativePath_Supplier))
+    else:
+        tupleOfChipsets = None
+
     
     relativePath_Board =  relativePath_Supplier + '338\\'
-    tupleOfBoards = tuple(os.listdir(relativePath_Board))
-    
+    if(os.path.exists(relativePath_Board)):
+        tupleOfBoards = tuple(os.listdir(relativePath_Board))
+    else: 
+        tupleOfBoards = None
+
     relativePath_Size =  relativePath_Board + 'PB801\\'
-    tupleOfSizes = tuple(os.listdir(relativePath_Size))
-    
+    if(os.path.exists(relativePath_Size)):
+        tupleOfSizes = tuple(os.listdir(relativePath_Size))
+    else:
+        tupleOfSizes = None
+
     relativePath_Panel =  relativePath_Size + 'TV32\\'
-    tupleOfPanels = tuple(os.listdir(relativePath_Panel))
-    
+    if(os.path.exists(relativePath_Panel)):
+        tupleOfPanels = tuple(os.listdir(relativePath_Panel))
+    else:
+        tupleOfPanels = None
+
+
     relativePath_Current =  relativePath_Panel + 'ST315\\'    
-    tupleOfCurrents = tuple(os.listdir(relativePath_Current))
-    
-    relativePath_Logo =  relativePath_Current + 'REF_300\\'    
-    tupleOfLogos = tuple(os.listdir(relativePath_Logo))
-    
-    
-    tupleOfBootAnimation = tuple(os.listdir(relativePath_BootAnimation))
-    tupleOfLaunchers = tuple(os.listdir(relativePath_Apks + '\\Launchers\\338\UBC'))
-    tupleOfSystemApks = tuple(os.listdir(relativePath_Apks + 'commonSystemAPKs'))
-    tupleOfUserApks = tuple(os.listdir(relativePath_Apks + 'commonUserApks'))
-    
-    tupleOfFeatuer_1 = tuple(os.listdir('.\\..\\Database\\Feature1'))
-    
-    tupleOfSystemApksAfterExtracting = tuple(os.listdir(relativePath_SystemApks))
+    if(os.path.exists(relativePath_Current)):
+        tupleOfCurrents = tuple(os.listdir(relativePath_Current))
+    else:
+        tupleOfCurrents = None
+
+    relativePath_Logo =  relativePath_Current + 'REF_300\\' 
+    if(os.path.exists(relativePath_Logo)):   
+        tupleOfLogos = tuple(os.listdir(relativePath_Logo))
+    else:
+        tupleOfLogos = None
+
+
+    if(os.path.exists(relativePath_BootAnimation)): 
+        tupleOfBootAnimation = tuple(os.listdir(relativePath_BootAnimation))
+    else:
+        tupleOfBootAnimation = None
+
+    if(os.path.exists(relativePath_Apks + '\\Launchers\\CVT\\338\UBC')): 
+        tupleOfLaunchers = tuple(os.listdir(relativePath_Apks + '\\Launchers\\CVT\\338\UBC'))
+    else: 
+        tupleOfLaunchers = None
+
+    relatePath_commonSystemAPKs = relativePath_Apks + 'commonSystemAPKs\\338'
+    if(os.path.exists(relatePath_commonSystemAPKs)): 
+        tupleOfSystemApks = tuple(os.listdir(relatePath_commonSystemAPKs))
+    else:
+        tupleOfSystemApks = None
+
+    relatePath_commonUserAPKs = relativePath_Apks + 'commonUserApks\\338'
+    if(os.path.exists(relatePath_commonUserAPKs)): 
+        tupleOfUserApks = tuple(os.listdir(relatePath_commonUserAPKs))
+    else: 
+        tupleOfUserApks = None
+
+    if(os.path.exists('.\\..\\Database\\Feature1')): 
+        tupleOfFeatuer_1 = tuple(os.listdir('.\\..\\Database\\Feature1'))
+    else: 
+        tupleOfFeatuer_1 = None
+
+    if(os.path.exists(relativePath_SystemApks)): 
+        tupleOfSystemApksAfterExtracting = tuple(os.listdir(relativePath_SystemApks))
+    else: 
+        tupleOfSystemApksAfterExtracting = None
 ##########################################################################################    
     HIGHT_OF_LIST_BOX = 7
 
@@ -112,7 +167,7 @@ if __name__ == '__main__':
     lboxListOfSuppliers = Listbox(ttkFrameRoot, listvariable=stringTupleOfSuppliers, height=HIGHT_OF_LIST_BOX, exportselection=0)
     lboxListOfSuppliers.grid(column=COLUMN_SUPPLIERS, row=1, rowspan=ROW_SPAN, sticky=(N,S,E,W))
     
-    lblListOfSuppliers = ttk.Label(ttkFrameRoot, text="SUPPLIER")
+    lblListOfSuppliers = ttk.Label(ttkFrameRoot, text="SUPPLIER", font=("Helvetica", FONT_SIZE))
     lblListOfSuppliers.grid(column=COLUMN_SUPPLIERS, row=0, padx=10, pady=5)
     for i in range(0,len(tupleOfSuppliers),2):
         lboxListOfSuppliers.itemconfigure(i, background='#f0f0ff')
@@ -125,7 +180,7 @@ if __name__ == '__main__':
     lboxListOfChipsets = Listbox(ttkFrameRoot, listvariable=stringTupleOfChipsets, height=5, exportselection=0)
     lboxListOfChipsets.grid(column=COLUMN_CHIPSET, row=1, rowspan=ROW_SPAN, sticky=(N,S,E,W))
     
-    lblListOfChipsets = ttk.Label(ttkFrameRoot, text="CHIPSET")
+    lblListOfChipsets = ttk.Label(ttkFrameRoot, text="CHIPSET", font=("Helvetica", FONT_SIZE))
     lblListOfChipsets.grid(column=COLUMN_CHIPSET, row=0, padx=10, pady=5)
     for i in range(0,len(tupleOfChipsets),2):
         lboxListOfChipsets.itemconfigure(i, background='#f0f0ff')
@@ -134,7 +189,7 @@ if __name__ == '__main__':
     lboxListOfBoards = Listbox(ttkFrameRoot, listvariable=stringTupleOfBoards, height=5, exportselection=0)
     lboxListOfBoards.grid(column=COLUMN_BOARD, row=1, rowspan=ROW_SPAN, sticky=(N,S,E,W))
     
-    lblListOfBoards = ttk.Label(ttkFrameRoot, text="BOARD")
+    lblListOfBoards = ttk.Label(ttkFrameRoot, text="BOARD", font=("Helvetica", FONT_SIZE))
     lblListOfBoards.grid(column=COLUMN_BOARD, row=0, padx=10, pady=5)
     for i in range(0,len(tupleOfBoards),2):
         lboxListOfBoards.itemconfigure(i, background='#f0f0ff')        
@@ -143,7 +198,7 @@ if __name__ == '__main__':
     lboxListOfSizes = Listbox(ttkFrameRoot, listvariable=stringTupleOfSizes, height=5, exportselection=0)
     lboxListOfSizes.grid(column=COLUMN_SIZE, row=1, rowspan=ROW_SPAN, sticky=(N,S,E,W))
     
-    lblListOfSizes = ttk.Label(ttkFrameRoot, text="SIZE")
+    lblListOfSizes = ttk.Label(ttkFrameRoot, text="SIZE", font=("Helvetica", FONT_SIZE))
     lblListOfSizes.grid(column=COLUMN_SIZE, row=0, padx=10, pady=5)
     for i in range(0,len(tupleOfSizes),2):
         lboxListOfSizes.itemconfigure(i, background='#f0f0ff')
@@ -153,7 +208,7 @@ if __name__ == '__main__':
     lboxListOfPanels = Listbox(ttkFrameRoot, listvariable=stringTupleOfPanels, height=5, exportselection=0)
     lboxListOfPanels.grid(column=COLUMN_PANEL, row=1, rowspan=ROW_SPAN, sticky=(N,S,E,W))
     
-    lblListOfPanels = ttk.Label(ttkFrameRoot, text="PANEL")
+    lblListOfPanels = ttk.Label(ttkFrameRoot, text="PANEL", font=("Helvetica", FONT_SIZE))
     lblListOfPanels.grid(column=COLUMN_PANEL, row=0, padx=10, pady=5)
     for i in range(0,len(tupleOfPanels),2):
         lboxListOfPanels.itemconfigure(i, background='#f0f0ff')
@@ -162,8 +217,7 @@ if __name__ == '__main__':
     stringTupleOfCurrents = StringVar(value=tupleOfCurrents)
     lboxListOfCurrents = Listbox(ttkFrameRoot, listvariable=stringTupleOfCurrents, height=5, exportselection=0)
     lboxListOfCurrents.grid(column=COLUMN_CURRENT, row=1, rowspan=ROW_SPAN, sticky=(N,S,E,W))
-    
-    lblListOfCurrents = ttk.Label(ttkFrameRoot, text="CURRENT")
+    lblListOfCurrents = ttk.Label(ttkFrameRoot, text="CURRENT", font=("Helvetica", FONT_SIZE))
     lblListOfCurrents.grid(column=COLUMN_CURRENT, row=0, padx=10, pady=5)
     for i in range(0,len(tupleOfCurrents),2):
         lboxListOfCurrents.itemconfigure(i, background='#f0f0ff')
@@ -172,7 +226,7 @@ if __name__ == '__main__':
     lboxListOfLogos = Listbox(ttkFrameRoot, listvariable=stringTupleOfLogos, height=5, exportselection=0)
     lboxListOfLogos.grid(column=COLUMN_LOGO, row=1, rowspan=ROW_SPAN, sticky=(N,S,E,W))
     
-    lblListOfLogos = ttk.Label(ttkFrameRoot, text="LOGO")
+    lblListOfLogos = ttk.Label(ttkFrameRoot, text="LOGO", font=("Helvetica", FONT_SIZE))
     lblListOfLogos.grid(column=COLUMN_LOGO, row=0, padx=10, pady=5)
     for i in range(0,len(tupleOfLogos),2):
         lboxListOfLogos.itemconfigure(i, background='#f0f0ff')
@@ -192,7 +246,7 @@ if __name__ == '__main__':
     lboxListOfBootAnimation = Listbox(ttkFrameRoot, listvariable=stringTupleOfBootAnimation, height=5, exportselection=0)
     lboxListOfBootAnimation.grid(column=COLUMN_BOOT_ANIMATION, row=1, rowspan=ROW_SPAN, sticky=(N,S,E,W))
 
-    lblListOfBootAnimation = ttk.Label(ttkFrameRoot, text="BOOT ANIMATION")
+    lblListOfBootAnimation = ttk.Label(ttkFrameRoot, text="ANIMATION", font=("Helvetica", FONT_SIZE))
     lblListOfBootAnimation.grid(column=COLUMN_BOOT_ANIMATION, row=0, padx=10, pady=5)
 
 
@@ -203,7 +257,7 @@ if __name__ == '__main__':
     lboxListOfLaunchers = Listbox(ttkFrameRoot, listvariable=stringTupleOfLaunchers, height=5, exportselection=0)
     lboxListOfLaunchers.grid(column=COLUMN_LAUNCHER, row=1, rowspan=ROW_SPAN, sticky=(N,S,E,W))
 
-    lblListOfLaunchers = ttk.Label(ttkFrameRoot, text="LAUNCHER")
+    lblListOfLaunchers = ttk.Label(ttkFrameRoot, text="LAUNCHER", font=("Helvetica", FONT_SIZE))
     lblListOfLaunchers.grid(column=COLUMN_LAUNCHER, row=0, padx=10, pady=5)
 
 
@@ -215,7 +269,7 @@ if __name__ == '__main__':
     lboxListOfSystemApks = Listbox(ttkFrameRoot, listvariable=stringTupleOfSystemApks, height=7, exportselection=0)
     lboxListOfSystemApks.grid(column=COLUMN_SYSTEM_APK, row=1,  sticky=(N,S,E,W))
 
-    lblListOfSystemApks = ttk.Label(ttkFrameRoot, text="SYSTEM APK")
+    lblListOfSystemApks = ttk.Label(ttkFrameRoot, text="USER SYSTEM APKS", font=("Helvetica", FONT_SIZE))
     lblListOfSystemApks.grid(column=COLUMN_SYSTEM_APK, row=0, padx=10, pady=5)
 
 
@@ -226,7 +280,7 @@ if __name__ == '__main__':
     lboxListOfUserApks = Listbox(ttkFrameRoot, listvariable=stringTupleOfUserApks, height=15, exportselection=0)
     lboxListOfUserApks.grid(column=COLUMN_SYSTEM_APK, row=5 + 2,  sticky=(N,S,E,W))
 
-    lblListOfUserApks = ttk.Label(ttkFrameRoot, text="User APK")
+    lblListOfUserApks = ttk.Label(ttkFrameRoot, text="User APKS", font=("Helvetica", FONT_SIZE))
     lblListOfUserApks.grid(column=COLUMN_SYSTEM_APK, row=5 + 1, padx=10, pady=5)
 
 
@@ -239,12 +293,15 @@ if __name__ == '__main__':
     lboxListOfSystemApksAfterExtracting = Listbox(ttkFrameRoot, listvariable=stringTupleOfSystemApksAfterExtracting, height=30, exportselection=0)
     lboxListOfSystemApksAfterExtracting.grid(column=COLUMN_SYSTEM_APK, row=20 + 2, rowspan=ROW_SPAN, sticky=(N,S,E,W))
 
-    lblListOfSystemApksAfterExtracting = ttk.Label(ttkFrameRoot, text="SYSTEM APK AFTER EXTRACT SYSTEM.IMG")
+    lblListOfSystemApksAfterExtracting = ttk.Label(ttkFrameRoot, text="SYSTEM APKS", font=("Helvetica", FONT_SIZE))
     lblListOfSystemApksAfterExtracting.grid(column=COLUMN_SYSTEM_APK, row=20 + 1, padx=10, pady=5)
 
 
     for i in range(0,len(tupleOfSystemApksAfterExtracting),2):
         lboxListOfSystemApksAfterExtracting.itemconfigure(i, background='#f0f0ff') 
+
+
+    
 ################################################################################################
 ################################################################################################
     def Delete_a_List(list):
@@ -262,33 +319,59 @@ if __name__ == '__main__':
     def Insert_an_Item(list, item):
         list.insert(END, item)
     
+
+    def Get_Version():
+        version = lboxListOfBootAnimation.get(lboxListOfBootAnimation.curselection()) + '_'
+        if('TV32' in lboxListOfSizes.get(lboxListOfSizes.curselection())):
+            version = version + '32'
+        elif('TV40' in lboxListOfSizes.get(lboxListOfSizes.curselection())):
+            version = version + '40'
+        elif('TV43' in lboxListOfSizes.get(lboxListOfSizes.curselection())):
+            version = version + '43'
+            
+        version = version + lboxListOfPanels.get(lboxListOfPanels.curselection())
+        version = version + lboxListOfCurrents.get(lboxListOfCurrents.curselection())
+            
+        if('Hinh_Binh_Hanh' in lboxListOfLaunchers.get(lboxListOfLaunchers.curselection())):
+            version = version + 'UXBH'
+        elif('Hinh_Chu_Nhat' in lboxListOfLaunchers.get(lboxListOfLaunchers.curselection())):
+            version = version + 'UXCN'
+        elif('Chin_Cuc' in lboxListOfLaunchers.get(lboxListOfLaunchers.curselection())):    
+            version = version + 'UX9C'
+        
+        version = version + lboxListOfBoards.get(lboxListOfBoards.curselection())
+        now = datetime.datetime.now()
+        strDate = str(now.year) + str(now.month) + str(now.day) + '_' + str(now.hour) + str(now.minute) + str(now.second)
+        # version = version + strDate
+        return version
+        
     def Get_Folder_Path(option):
         folder_path = ''
         if(option == COLUMN_SUPPLIERS):
             folder_path = SUPPLIER_PATH \
-                            + lboxListOfSuppliers.get(lboxListOfSuppliers.curselection()) 
+                            + lboxListOfSuppliers.get(lboxListOfSuppliers.curselection()) + '\\'
         elif(option == COLUMN_CHIPSET):
             folder_path = SUPPLIER_PATH \
                             + lboxListOfSuppliers.get(lboxListOfSuppliers.curselection()) + '\\'\
-                            + lboxListOfChipsets.get(lboxListOfChipsets.curselection())
+                            + lboxListOfChipsets.get(lboxListOfChipsets.curselection()) + '\\'
         elif(option == COLUMN_BOARD):
             folder_path = SUPPLIER_PATH \
                             + lboxListOfSuppliers.get(lboxListOfSuppliers.curselection()) + '\\'\
                             + lboxListOfChipsets.get(lboxListOfChipsets.curselection()) + '\\'\
-                            + lboxListOfBoards.get(lboxListOfBoards.curselection())
+                            + lboxListOfBoards.get(lboxListOfBoards.curselection()) + '\\'
         elif(option == COLUMN_SIZE):
             folder_path = SUPPLIER_PATH \
                             + lboxListOfSuppliers.get(lboxListOfSuppliers.curselection()) + '\\'\
                             + lboxListOfChipsets.get(lboxListOfChipsets.curselection()) + '\\'\
                             + lboxListOfBoards.get(lboxListOfBoards.curselection()) + '\\'\
-                            + lboxListOfSizes.get(lboxListOfSizes.curselection())
+                            + lboxListOfSizes.get(lboxListOfSizes.curselection()) + '\\' 
         elif(option == COLUMN_PANEL):    
             folder_path = SUPPLIER_PATH \
                             + lboxListOfSuppliers.get(lboxListOfSuppliers.curselection()) + '\\'\
                             + lboxListOfChipsets.get(lboxListOfChipsets.curselection()) + '\\'\
                             + lboxListOfBoards.get(lboxListOfBoards.curselection()) + '\\'\
                             + lboxListOfSizes.get(lboxListOfSizes.curselection()) + '\\'\
-                            + lboxListOfPanels.get(lboxListOfPanels.curselection())
+                            + lboxListOfPanels.get(lboxListOfPanels.curselection()) + '\\'
         elif(option == COLUMN_CURRENT):
             folder_path = SUPPLIER_PATH \
                             + lboxListOfSuppliers.get(lboxListOfSuppliers.curselection()) + '\\'\
@@ -296,7 +379,7 @@ if __name__ == '__main__':
                             + lboxListOfBoards.get(lboxListOfBoards.curselection()) + '\\'\
                             + lboxListOfSizes.get(lboxListOfSizes.curselection()) + '\\'\
                             + lboxListOfPanels.get(lboxListOfPanels.curselection()) + '\\'\
-                            + lboxListOfCurrents.get(lboxListOfCurrents.curselection())
+                            + lboxListOfCurrents.get(lboxListOfCurrents.curselection()) + '\\'
         elif(option == COLUMN_LOGO):
             folder_path = SUPPLIER_PATH \
                             + lboxListOfSuppliers.get(lboxListOfSuppliers.curselection()) + '\\'\
@@ -305,13 +388,16 @@ if __name__ == '__main__':
                             + lboxListOfSizes.get(lboxListOfSizes.curselection()) + '\\'\
                             + lboxListOfPanels.get(lboxListOfPanels.curselection()) + '\\'\
                             + lboxListOfCurrents.get(lboxListOfCurrents.curselection()) + '\\' \
-                            + lboxListOfLogos.get(lboxListOfLogos.curselection())
+                            + lboxListOfLogos.get(lboxListOfLogos.curselection()) + '\\'
         elif(option == COLUMN_BOOT_ANIMATION):
-            folder_path = relativePath_BootAnimation + lboxListOfBootAnimation.get(lboxListOfBootAnimation.curselection())
+            folder_path = BOOT_ANIMATION_PATH \
+                                + lboxListOfSizes.get(lboxListOfSizes.curselection()) + '\\' \
+                                + lboxListOfBootAnimation.get(lboxListOfBootAnimation.curselection()) + '\\'
         elif(option == COLUMN_LAUNCHER):
             folder_path = relativePath_Apks + 'Launchers\\' \
+                            + lboxListOfSuppliers.get(lboxListOfSuppliers.curselection()) + '\\'\
                             + lboxListOfChipsets.get(lboxListOfChipsets.curselection()) + '\\'\
-                            + lboxListOfBootAnimation.get(lboxListOfBootAnimation.curselection())
+                            + lboxListOfBootAnimation.get(lboxListOfBootAnimation.curselection()) + '\\'
             pass
         elif(option == SAVING_BIN_FILE_PATH):
             folder_path = SUPPLIER_PATH[14:] \
@@ -323,10 +409,19 @@ if __name__ == '__main__':
                             + lboxListOfCurrents.get(lboxListOfCurrents.curselection()) + '\\' \
                             + lboxListOfLogos.get(lboxListOfLogos.curselection()) + '\\' \
                             + lboxListOfBootAnimation.get(lboxListOfBootAnimation.curselection()) + '\\' \
-                            + lboxListOfLaunchers.get(lboxListOfLaunchers.curselection())
+                            + lboxListOfLaunchers.get(lboxListOfLaunchers.curselection()) + '\\'
+        elif(option == COLUMN_SYSTEM_APK):
+            folder_path = relativePath_Apks + 'commonSystemAPKs\\' + lboxListOfChipsets.get(lboxListOfChipsets.curselection()) + '\\'
+        elif(option == COLUMN_USER_APK):
+            folder_path = relativePath_Apks + 'commonUserAPKs\\' + lboxListOfChipsets.get(lboxListOfChipsets.curselection()) + '\\'
         return folder_path
 ################################################################################################
 ################################################################################################
+
+    def Update_System_Apks():
+        Delete_a_List(lboxListOfSystemApksAfterExtracting)
+        Insert_a_Lists(lboxListOfSystemApksAfterExtracting, relativePath_SystemApks)    
+
     def Update_List_Of_Suppliers(*args):
         print(lboxListOfSuppliers.get(lboxListOfSuppliers.curselection()))
         relativePath_Supplier = Get_Folder_Path(COLUMN_SUPPLIERS)
@@ -340,6 +435,19 @@ if __name__ == '__main__':
         print(relativePath_Board)
         Delete_a_List(lboxListOfBoards)
         Insert_a_Lists(lboxListOfBoards, relativePath_Board)
+
+        relatePath_commonSystemAPKs = Get_Folder_Path(COLUMN_SYSTEM_APK)
+        print(relatePath_commonSystemAPKs)
+        Delete_a_List(lboxListOfSystemApks)
+        Insert_a_Lists(lboxListOfSystemApks, relatePath_commonSystemAPKs)
+
+        relatePath_commonUserAPKs = Get_Folder_Path(COLUMN_USER_APK)
+        print(relatePath_commonUserAPKs)
+        Delete_a_List(lboxListOfUserApks)
+        Insert_a_Lists(lboxListOfUserApks, relatePath_commonUserAPKs)
+        
+
+
     
     def Update_List_Of_Boards(*args):
         print(lboxListOfBoards.get(lboxListOfBoards.curselection()))
@@ -354,6 +462,12 @@ if __name__ == '__main__':
         print(relativePath_Panel)
         Delete_a_List(lboxListOfPanels)
         Insert_a_Lists(lboxListOfPanels, relativePath_Panel)
+
+        relativePath_BootAnimation = BOOT_ANIMATION_PATH + lboxListOfSizes.get(lboxListOfSizes.curselection())
+        print(relativePath_BootAnimation)
+        Delete_a_List(lboxListOfBootAnimation)
+        Insert_a_Lists(lboxListOfBootAnimation, relativePath_BootAnimation)
+
 
     def Update_List_Of_Panels(*args):
         print(lboxListOfPanels.get(lboxListOfPanels.curselection()))
@@ -374,9 +488,11 @@ if __name__ == '__main__':
         relativePath_BinFile = Get_Folder_Path(COLUMN_LOGO)
         if(os.path.exists(relativePath_BinFile)):
             for item in os.listdir(relativePath_BinFile):
-                print item
-                lblVariableBinFile.set(item)
-
+                if('bin' in item):
+                    print item
+                    lblVariableBinFile.set(item)
+        
+        
         # Delete_a_List(lboxListOfPanels)
         # insert_a_Lists(lboxListOfPanels, os.listdir(str))
         pass
@@ -401,15 +517,19 @@ if __name__ == '__main__':
         Insert_a_Lists(lboxListOfLaunchers, relativePath_BootAnimation)
         pass
         
+
     def Remove_Old_Launcher_Apk(*args):
         remove_launcher_command = 'rm ' + relativePath_SystemApks + lboxListOfSystemApksAfterExtracting.get(lboxListOfSystemApksAfterExtracting.curselection())
         result = tkMessageBox.askokcancel("Delete Launcher APK", "Are you sure you want to delete " + lboxListOfSystemApksAfterExtracting.get(lboxListOfSystemApksAfterExtracting.curselection()))
         print result
         if(result == True):
             subprocess.call(remove_launcher_command, shell=True)
-            Delete_a_List(lboxListOfSystemApksAfterExtracting)
-            Insert_a_Lists(lboxListOfSystemApksAfterExtracting, relativePath_SystemApks)
-    
+            Update_System_Apks()
+    def Update_List_Of_System_Apks(*args):
+        Update_System_Apks()
+
+
+###########################################################################################
     lboxListOfSuppliers.bind('<<ListboxSelect>>', Update_List_Of_Suppliers)
     lboxListOfChipsets.bind('<<ListboxSelect>>',  Update_List_Of_Chipsets)
     lboxListOfBoards.bind('<<ListboxSelect>>',  Update_List_Of_Boards)
@@ -420,6 +540,7 @@ if __name__ == '__main__':
     # lboxListOfFeature_1.bind('<<ListboxSelect>>', Action_For_List_Of_Feature_1)
     lboxListOfBootAnimation.bind('<<ListboxSelect>>',  Update_List_Of_BootAnimation)
 
+    # lboxListOfSystemApksAfterExtracting.bind('<<ListboxSelect>>', Update_List_Of_System_Apks)
     lboxListOfSystemApksAfterExtracting.bind('<Double-1>', Remove_Old_Launcher_Apk)
 
 ##########################################################################################    
@@ -428,27 +549,44 @@ if __name__ == '__main__':
         bin_file_path = Get_Folder_Path(COLUMN_LOGO)
         # bin_file_path = os.listdir(temp_path)
         print('bin_file_path'+ bin_file_path)
-        unpacked_scripts.Unpack_Bin_File(binpath = bin_file_path)
-         
+        if('CVT' in lboxListOfSuppliers.get(lboxListOfSuppliers.curselection())):
+            unpacked_scripts.Unpack_Bin_File(binpath = bin_file_path)
+        elif ('TopTech' in lboxListOfSuppliers.get(lboxListOfSuppliers.curselection())):
+            if('338' in lboxListOfChipsets.get(lboxListOfChipsets.curselection())):
+                unpacked_scripts_338_toptech.Unpack_Bin_File(binpath = bin_file_path)
+            elif('638' in lboxListOfChipsets.get(lboxListOfChipsets.curselection())):
+                unpacked_scripts_638_toptech.Unpack_Bin_File(binpath = bin_file_path)
 ##########################################################################################            
     def Pack_Bin_File():
-        user_apks = relativePath_Apks + 'commonUserAPKs\\' 
-        system_apks = relativePath_Apks + 'commonSystemAPKs\\'
-        launcher = Get_Folder_Path(COLUMN_LAUNCHER) 
+        user_apks = relativePath_Apks + 'commonUserAPKs\\' + lboxListOfChipsets.get(lboxListOfChipsets.curselection()) + '\\'
+        system_apks = relativePath_Apks + 'commonSystemAPKs\\' + lboxListOfChipsets.get(lboxListOfChipsets.curselection()) + '\\'
+        launcher = Get_Folder_Path(COLUMN_LAUNCHER) + '\\' + lboxListOfLaunchers.get(lboxListOfLaunchers.curselection())
+        tvsize = lboxListOfSizes.get(lboxListOfSizes.curselection())
         boot_animation = Get_Folder_Path(COLUMN_BOOT_ANIMATION)
-        auto_build_bin_file.Build_System_Image(user_apks, system_apks, launcher, boot_animation)
+        version = Get_Version()
+        if('CVT' in lboxListOfSuppliers.get(lboxListOfSuppliers.curselection())):
+            auto_build_bin_file.Build_System_Image(user_apks, system_apks, launcher, boot_animation, tvsize, version)
+        elif('TopTech' in lboxListOfSuppliers.get(lboxListOfSuppliers.curselection())):
+            if('338' in lboxListOfChipsets.get(lboxListOfChipsets.curselection())):
+                auto_build_bin_file_338_toptech.Build_System_Image(user_apks, system_apks, launcher, boot_animation, tvsize, version)
+            elif ('638' in lboxListOfChipsets.get(lboxListOfChipsets.curselection())):   
+                auto_build_bin_file_638_toptech.Build_System_Image(user_apks, system_apks, launcher, boot_animation, tvsize, version) 
         pass
        
     def Save_Bin_File():
-        relativePath = Get_Folder_Path(SAVING_BIN_FILE_PATH)
-        relativePath_BinFile = Get_Folder_Path(COLUMN_LOGO)
-        if(os.path.exists(relativePath_BinFile)):
-            for item in os.listdir(relativePath_BinFile):
-                print item
-                lblVariableBinFile.set(item)
-                bin_file_name = item
-        
-        auto_build_bin_file.Save_Bin_File_To_Dropbox(relativePath, bin_file_name)
+        try:
+            relativePath = Get_Folder_Path(SAVING_BIN_FILE_PATH)
+            relativePath_BinFile = Get_Folder_Path(COLUMN_LOGO)
+            if(os.path.exists(relativePath_BinFile)):
+                for item in os.listdir(relativePath_BinFile):
+                    if 'bin' in item:
+                        print item
+                        lblVariableBinFile.set(item)
+                        bin_file_name = item
+            
+            auto_build_bin_file.Save_Bin_File_To_Dropbox(relativePath, bin_file_name)
+        except ValueError:
+            print ValueError
     
 # ##########################################################################################           
 # ##########################################################################################            
@@ -467,7 +605,7 @@ if __name__ == '__main__':
         print('Start_Unpack_Bin_File')
         lblVariableInProgress.set('Start_Unpack_Bin_File')
         Unpack_Bin_File()
-        
+        Update_System_Apks()
         print('Start_Build_Bin_File')
         lblVariableInProgress.set('Start_Build_Bin_File')
         Pack_Bin_File()
@@ -475,28 +613,50 @@ if __name__ == '__main__':
         print('Start_Copy_Bin_File')
         lblVariableInProgress.set('Start_Copy_Bin_File')
         Save_Bin_File()
+        
+    def Start_Pack_Bin_File(): 
+        print('Start_Build_Bin_File')
+        lblVariableInProgress.set('Start_Build_Bin_File')
+        
+        Pack_Bin_File()
+        Update_System_Apks()
+        print('Start_Copy_Bin_File')
+        lblVariableInProgress.set('Start_Copy_Bin_File')
+        Save_Bin_File()
         # COLUMN_BUTTON
     
-    
+
+
+
+#################################################################################################################
+    BUILD_BUTTON_COLUMN = 3
+    PACK_BUTTON_COLUMN = 4
+    QUIT_BUTTON_COLUMN = 5
+
     lblBinFile1 = ttk.Label(ttkFrameRoot, text="BinFile")
-    lblBinFile1.grid(column=COLUMN_PANEL, row=ROW_SPAN + 1)
+    lblBinFile1.grid(column=BUILD_BUTTON_COLUMN, row=2*ROW_SPAN + 1, rowspan = 1)
 
     lblVariableBinFile = StringVar()
     lblBinFile = ttk.Label(ttkFrameRoot, text="BinFile", textvariable = lblVariableBinFile)
-    lblBinFile.grid(column=COLUMN_CURRENT, row=ROW_SPAN + 1, columnspan = 3, sticky = W)
+    lblBinFile.grid(column=PACK_BUTTON_COLUMN, row=2*ROW_SPAN + 1, rowspan = 1, columnspan = 3, sticky = W)
 
+    
     lblProgress1 = ttk.Label(ttkFrameRoot, text="In Progress")
-    lblProgress1.grid(column=COLUMN_PANEL, row=ROW_SPAN + 2)
+    lblProgress1.grid(column=BUILD_BUTTON_COLUMN, row=2*ROW_SPAN + 2, rowspan = 1,)
 
     lblVariableInProgress = StringVar()
     lblInProgress = ttk.Label(ttkFrameRoot, textvariable = lblVariableInProgress)
-    lblInProgress.grid(column=COLUMN_CURRENT, row=ROW_SPAN + 2, columnspan = 3, sticky = W)
+    lblInProgress.grid(column=PACK_BUTTON_COLUMN, row=2*ROW_SPAN + 2, rowspan = 1, columnspan = 3, sticky = W)
     
+
     ttkButtonBuildBinFile = ttk.Button(ttkFrameRoot, text='BUILD', command=Start_Build_Bin_File, default='active')
-    ttkButtonBuildBinFile.grid(column=4, row=ROW_SPAN + 3, padx=10, pady=5)
+    ttkButtonBuildBinFile.grid(column=BUILD_BUTTON_COLUMN, row=2*ROW_SPAN + 3, rowspan = 1, padx=10, pady=5)
+
+    ttkButtonPackBinFile = ttk.Button(ttkFrameRoot, text='PACK', command=Start_Pack_Bin_File, default='active')
+    ttkButtonPackBinFile.grid(column=PACK_BUTTON_COLUMN, row=2*ROW_SPAN + 3, rowspan = 1, padx=10, pady=5)
+
     ttkButtonQuit = ttk.Button(ttkFrameRoot, text='QUIT', command=root.quit, default = 'active')
-    ttkButtonQuit.grid(column=5, row=ROW_SPAN + 3, padx=10, pady=5)
+    ttkButtonQuit.grid(column=QUIT_BUTTON_COLUMN, row=2*ROW_SPAN + 3, rowspan = 1, padx=10, pady=5)
 
-
-
+    
     root.mainloop()

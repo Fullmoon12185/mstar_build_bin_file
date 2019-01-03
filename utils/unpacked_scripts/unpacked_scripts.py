@@ -18,42 +18,46 @@ def extract_size(line):
 	return 'size=' + line.split()[-1] + '\n' 
 
 def load_header_file_store_to_mmc_info(header_file_name):
-	fread = open(header_file_name, 'r+')
-	line_num = 0
-	mmc_info = {}
-	list_env = []
+    print 'nguyen load_header_file_store_to_mmc_info'
+    fread = open(header_file_name, 'r+')
+    line_num = 0
+    mmc_info = {}
+    list_env = []
 	# search for lines that contain 'CEnv_UpgradeCRC_Tmp' and 'CEnv_UpgradeCRC_Val'
 	# get the CRC number and add it by 1
-	for line in fread:
-		if 'mmc create factorydata' in line:
-			print(extract_size(line))
-			mmc_info['factorydata'] = extract_size(line)
-		elif 'mmc create misc' in line:
-			mmc_info['misc'] = extract_size(line)
-		elif 'mmc create recovery' in line:
-			mmc_info['recovery'] = extract_size(line)
-		elif 'mmc create boot' in line:
-			mmc_info['boot'] = extract_size(line)
-		elif 'mmc create RTPM' in line:
-			mmc_info['RTPM'] = extract_size(line)
-		elif 'mmc create system' in line:
-			mmc_info['system'] = extract_size(line)
-		elif 'mmc create userdata' in line:
-			mmc_info['userdata'] = extract_size(line)
-		elif 'mmc create cache' in line:
-			mmc_info['cache'] = extract_size(line)
-		elif 'mmc create tvservice' in line:
-			mmc_info['tvservice'] = extract_size(line)
-		elif 'mmc create tvconfig' in line:
-			mmc_info['tvconfig'] = extract_size(line)
-		elif 'mmc create tvdatabase' in line:
-			mmc_info['tvdatabase'] = extract_size(line)
-		elif 'mmc create tvcustomer' in line:
-			mmc_info['tvcustomer'] = extract_size(line)
-		if 'setenv' in line:
-			list_env.append('\t' + line)
-	fread.close()
-	return list_env, mmc_info
+    for line in fread:
+        print 'out nguyen \t' + line
+        if 'mmc create factorydata' in line:
+            print(extract_size(line))
+            mmc_info['factorydata'] = extract_size(line)
+        elif 'mmc create misc' in line:
+            mmc_info['misc'] = extract_size(line)
+        elif 'mmc create recovery' in line:
+            mmc_info['recovery'] = extract_size(line)
+        elif 'mmc create boot' in line:
+            mmc_info['boot'] = extract_size(line)
+        elif 'mmc create RTPM' in line:
+            mmc_info['RTPM'] = extract_size(line)
+        elif 'mmc create system' in line:
+            mmc_info['system'] = extract_size(line)
+        elif 'mmc create userdata' in line:
+            mmc_info['userdata'] = extract_size(line)
+        elif 'mmc create cache' in line:
+            mmc_info['cache'] = extract_size(line)
+        elif 'mmc create tvservice' in line:
+            mmc_info['tvservice'] = extract_size(line)
+        elif 'mmc create tvconfig' in line:
+            mmc_info['tvconfig'] = extract_size(line)
+        elif 'mmc create tvdatabase' in line:
+            mmc_info['tvdatabase'] = extract_size(line)
+        elif 'mmc create tvcustomer' in line:
+            mmc_info['tvcustomer'] = extract_size(line)
+
+        if 'setenv' in line:
+            print 'nguyen \t' + line
+            list_env.append('\t' + line)
+    fread.close()
+    return list_env, mmc_info
 	
 def copy_env_variable_to_ini_file(cwd, binFileName, list_env, mmc_info):
     file_name = cwd + 'configs/' + INI_FILE
@@ -103,15 +107,12 @@ def copy_env_variable_to_ini_file(cwd, binFileName, list_env, mmc_info):
                     bool_modify_firmware_filename = 1
                 else:
                     fwrite.write(line)
+            elif 'cleanallenv' in line:
+                fwrite.write(line)
+                for env in list_env:
+                    fwrite.write(env)
             elif 'setenv' in line:
-                fwrite.write(list_env[list_index])
-                list_index = list_index + 1
-            elif 'saveenv' in line:
-                if(list_index < len(list_env)):
-                    temp = len(list_env) - list_index
-                    for item in list_env[-temp:]:
-                        fwrite.write(item)
-                    fwrite.write(line)	
+                pass
             else:
                 fwrite.write(line)
         else:
@@ -137,20 +138,24 @@ def copy_env_variable_to_ini_file(cwd, binFileName, list_env, mmc_info):
 
 
 def copy_original_bin_file_for_unpacking(binpath):
-    listFileName = os.listdir(binpath)
-    for i in listFileName:
-        binFileName = i
-        print binFileName
-        break
-    copy_command = 'cp ' + binpath + '\\' + binFileName + ' ' + MSTAR_BIN_TOOL + '\\' + BIN_FOR_UNPACK
-    print(copy_command)
-    subprocess.call(copy_command)
-    return binFileName
+    try:
+        listFileName = os.listdir(binpath)
+        for item in listFileName:
+            if('bin' in item):
+                binFileName = item
+                print binFileName
+        copy_command = 'cp ' + binpath + '\\' + binFileName + ' ' + MSTAR_BIN_TOOL + '\\' + BIN_FOR_UNPACK
+        print(copy_command)
+        subprocess.call(copy_command)
+        return binFileName
+    except ValueError:
+        print ValueError
+
     
 
 def unpacked(bin_file, cwd):
 	#unpacked_command = 'START /WAIT python unpack.py ' + bin_file +  ' ./pana_pack/'
-	unpacked_command = 'python unpack.py ' + BIN_FOR_UNPACK +  ' ./pana_pack/'
+	unpacked_command = 'python3 unpack.py ' + BIN_FOR_UNPACK +  ' ./pana_pack/'
 	
 	print unpacked_command
 	print cwd
@@ -167,19 +172,21 @@ def copy_system_file(cwd):
 
 def extract_system_file(cwd):
 	subprocess.call('START /WAIT ' + cwd + MSTAR_ANDROID + 'START.exe', shell=True)
-def delete_old_launcher():
-    list_apk = os.listdir('.\\..\\mstar-bin-tool\\MSTAR_Android\\temp\\system\\app\\')
-    for item in list_apk:
-        if 'launcher' in item:
-            print item
-            delete_command = 'rm .\\..\\mstar-bin-tool\\MSTAR_Android\\temp\\system\\app\\' + item
-            subprocess.call(delete_command, shell=True)
+
     
 def copy_libdecode():
     if(os.path.exists('.\\..\\mstar-bin-tool\\MSTAR_Android\\temp\\system\\lib\\libdecode.so') == False):
         copy_lib = 'cp .\\..\\Database\Libs\\libdecode.so .\\..\\mstar-bin-tool\\MSTAR_Android\\temp\\system\\lib'
         print(copy_lib)
         process = subprocess.call(copy_lib, shell=True)
+
+def copy_tvconfig(tvconfigPath):
+    try:
+        copy_command = 'cp ' + tvconfigPath + 'tvconfig.img' + ' ' + MSTAR_BIN_TOOL + '\\pana_pack'
+        print(copy_command)
+        subprocess.call(copy_command)
+    except ValueError:
+        print ValueError
 
 def make_a_user_apk_folder():
     if(os.path.exists('.\\..\\mstar-bin-tool\\MSTAR_Android\\temp\\system\\media\\user_system_apks') == False):
@@ -233,9 +240,9 @@ def unpack_procedure(cwd, ini_file = None, bin_file = None, binpath=None):
         copy_system_file(cwd)
         extract_system_file(cwd)
         copy_libdecode()
-        delete_old_launcher()
         make_a_user_apk_folder()
-        modify_build_prop(cwd)
+        # copy_tvconfig(binpath + 'tvconfig.img\\')
+        # modify_build_prop(cwd)
         print('=====================================================================')
         print('                  DONE UNPACK BIN FILE                               ')
         print('=====================================================================')
